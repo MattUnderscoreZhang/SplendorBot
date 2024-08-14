@@ -78,7 +78,8 @@ class GameState:
     gem_pool: Gems
     first_player_n: int
     current_player_n: int
-    turn: int
+    round: int
+    last_round: bool
 
     def check_consistency(self) -> None:
         # total number of gems
