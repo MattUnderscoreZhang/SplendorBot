@@ -1,4 +1,5 @@
 from pytest import raises
+
 from splendor_bot.game import new_game
 
 

@@ -64,13 +64,28 @@ def return_gems(game_state: GameState, player_n: int, gems: Gems) -> GameState:
     return game_state
 
 
-# TODO: win nobles
+def win_nobles(game_state: GameState, player_n: int) -> GameState:
+    game_state = deepcopy(game_state)
+    player = game_state.players[player_n]
+    for noble in reversed(game_state.nobles):
+        if player.generation >= noble.requirements:
+            player.nobles.append(noble)
+            game_state.nobles.remove(noble)
+            player.points += noble.points
+    return game_state
 
 
-# TODO: end turn (return gems, win nobles, move to next player)
-# def end_turn(game_state: GameState) -> GameState:
-    # game_state = deepcopy(game_state)
-    # current_player = game_state.players[game_state.current_player_n]
+def end_turn(game_state: GameState, gems_to_return: Gems) -> GameState:
+    game_state = deepcopy(game_state)
+    if len(game_state.players[game_state.current_player_n].gems) > 10:
+        game_state = return_gems(game_state, game_state.current_player_n, gems_to_return)
+        assert len(game_state.players[game_state.current_player_n].gems) == 10, \
+            "Returned the wrong number of gems."
+    else:
+        assert len(gems_to_return) == 0, "Unnecessary gem return."
+    game_state = win_nobles(game_state, game_state.current_player_n)
+    game_state = move_to_next_player(game_state)
+    return game_state
 
 
 def take_gems(game_state: GameState, player_n: int, gems: Gems) -> GameState:
