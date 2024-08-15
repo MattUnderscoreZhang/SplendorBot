@@ -1,11 +1,11 @@
 from pytest import raises
 
 from splendor_bot.game import (
-    new_game, 
-    take_gems, 
-    purchase_card, 
-    purchase_card_from_board, 
-    reserve_card_from_board, 
+    new_game,
+    take_gems,
+    purchase_card,
+    purchase_card_from_board,
+    reserve_card_from_board,
     purchase_reserved_card,
 )
 from splendor_bot.types import Card, Gems
@@ -13,6 +13,7 @@ from splendor_bot.types import Card, Gems
 
 def test_purchase_card():
     game_state = new_game(n_players=2)
+    # not enough gems
     with raises(Exception):
         purchase_card(
             game_state,
@@ -25,6 +26,7 @@ def test_purchase_card():
             ),
         )
 
+    # purchase first card
     game_state = take_gems(game_state, player_n=0, gems=Gems(1, 1, 1, 0, 0, 0))
     game_state = purchase_card(
         game_state,
@@ -41,7 +43,9 @@ def test_purchase_card():
     assert game_state.players[0].points == 1
     assert game_state.players[0].generation == Gems(1, 0, 0, 0, 0, 0)
 
+    # purchase second card using gem generation
     game_state = take_gems(game_state, player_n=0, gems=Gems(1, 1, 1, 0, 0, 0))
+    assert game_state.players[0].gems == Gems(1, 2, 2, 0, 0, 0)
     game_state = purchase_card(
         game_state,
         player_n=0,
@@ -49,13 +53,30 @@ def test_purchase_card():
             level=2,
             points=2,
             generation=Gems(0, 0, 0, 2, 0, 0),
-            cost=Gems(1, 2, 2, 0, 0, 0),
+            cost=Gems(2, 2, 2, 0, 0, 0),
         ),
     )
     assert game_state.players[0].gems == Gems(0, 0, 0, 0, 0, 0)
     assert len(game_state.players[0].purchased_cards) == 2
     assert game_state.players[0].points == 3
     assert game_state.players[0].generation == Gems(1, 0, 0, 2, 0, 0)
+
+    # purchase with gold
+    game_state = take_gems(game_state, player_n=0, gems=Gems(0, 0, 0, 0, 0, 1))
+    game_state = purchase_card(
+        game_state,
+        player_n=0,
+        card=Card(
+            level=1,
+            points=1,
+            generation=Gems(0, 0, 0, 0, 1, 0),
+            cost=Gems(1, 0, 0, 3, 0, 0),
+        ),
+    )
+    assert game_state.players[0].gems == Gems(0, 0, 0, 0, 0, 0)
+    assert len(game_state.players[0].purchased_cards) == 3
+    assert game_state.players[0].points == 4
+    assert game_state.players[0].generation == Gems(1, 0, 0, 2, 1, 0)
 
 
 def test_purchase_card_from_board():

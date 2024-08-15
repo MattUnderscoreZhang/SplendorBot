@@ -36,7 +36,7 @@ def new_game(n_players: int) -> GameState:
         current_player_n=first_player_n,
         round=1,
         last_round=False,
-        winner=None,
+        winners=[],
     )
 
 
@@ -79,17 +79,37 @@ def win_nobles(game_state: GameState, player_n: int) -> GameState:
 
 def end_turn(game_state: GameState, gems_to_return: Gems) -> GameState:
     game_state = deepcopy(game_state)
+    # return gems if the current player has more than 10
     if len(game_state.players[game_state.current_player_n].gems) > 10:
         game_state = return_gems(game_state, game_state.current_player_n, gems_to_return)
         assert len(game_state.players[game_state.current_player_n].gems) == 10, \
             "Returned the wrong number of gems."
     else:
         assert len(gems_to_return) == 0, "Unnecessary gem return."
+    # check if current player won any nobles
     game_state = win_nobles(game_state, game_state.current_player_n)
-    # TODO: check last round
-    # TODO: check end game
-    # TODO: if game over, score winner, else move to next player
-    game_state = move_to_next_player(game_state)
+    # check if game is over
+    if game_state.players[game_state.current_player_n].points >= 15:
+        game_state.last_round = True
+    if (
+        game_state.last_round and
+        (game_state.current_player_n + 1) % len(game_state.players) == game_state.first_player_n
+        and game_state.winners == []
+    ):
+        # score winners
+        highest_score = max(player.points for player in game_state.players)
+        highest_score_players = [player for player in game_state.players if player.points == highest_score]
+        if len(highest_score_players) == 1:
+            game_state.winners = highest_score_players
+        else:
+            least_purchases = min(len(player.purchased_cards) for player in highest_score_players)
+            game_state.winners = [
+                player for player in highest_score_players
+                if len(player.purchased_cards) == least_purchases
+            ]
+    # if the game is not over, move to the next player
+    if game_state.winners == []:
+        game_state = move_to_next_player(game_state)
     return game_state
 
 
@@ -98,14 +118,14 @@ def take_gems(game_state: GameState, player_n: int, gems: Gems) -> GameState:
     # validate that gems are takable
     assert gems > Gems(0, 0, 0, 0, 0, 0), "Must take at least one gem."
     assert gems <= game_state.gem_pool, f"Not enough gems. Tried to take {gems}, but gem pool is {game_state.gem_pool}."
-    # can only take one yellow by itself (when reserving a card)
-    if gems.yellow != 0:
-        assert gems == Gems(0, 0, 0, 0, 0, 1), f"Can only take one yellow by itself. Tried to take {gems}."
+    # can only take one gold by itself (when reserving a card)
+    if gems.gold != 0:
+        assert gems == Gems(0, 0, 0, 0, 0, 1), f"Can only take one gold by itself. Tried to take {gems}."
     # rules for normal gem taking
     else:
-        # counting non-yellow colors
-        n_colors_in_pool = sum([val > 0 and key != "yellow" for key, val in game_state.gem_pool.__dict__.items()])
-        taking_n_colors = sum(val > 0 and key != "yellow" for key, val in gems.__dict__.items())
+        # counting non-gold colors
+        n_colors_in_pool = sum([val > 0 and key != "gold" for key, val in game_state.gem_pool.__dict__.items()])
+        taking_n_colors = sum(val > 0 and key != "gold" for key, val in gems.__dict__.items())
         # if taking one color
         if taking_n_colors == 1:
             gem_color = [key for key, val in gems.__dict__.items() if val > 0][0]
@@ -132,8 +152,8 @@ def take_gems(game_state: GameState, player_n: int, gems: Gems) -> GameState:
 def reserve_card(game_state: GameState, player_n: int, card: Card) -> GameState:
     game_state = deepcopy(game_state)
     game_state.players[player_n].reserved_cards.append(card)
-    # if there's no yellow gems left, don't do anything
-    if game_state.gem_pool.yellow > 0:
+    # if there's no gold left, don't do anything
+    if game_state.gem_pool.gold > 0:
         game_state = take_gems(game_state, player_n, Gems(0, 0, 0, 0, 0, 1))
     return game_state
 
@@ -162,10 +182,29 @@ def reserve_card_from_board(game_state: GameState, player_n: int, level: int, ca
 def purchase_card(game_state: GameState, player_n: int, card: Card) -> GameState:
     game_state = deepcopy(game_state)
     player = game_state.players[player_n]
-    # TODO: allow use of yellow gems
-    assert card.cost <= player.gems, \
-        f"Not enough gems. Tried to pay {card.cost}, but player has {player.gems}."
-    player.gems -= card.cost
+    # reduce card cost by gem generation
+    reduced_cost = Gems(
+        **{
+            color: max(0, card.cost.__dict__[color] - player.generation.__dict__[color])
+            for color in player.gems.__dict__.keys()
+        }
+    )
+    # check if gold can cover additional costs
+    required_gold = sum(
+        max(0, reduced_cost.__dict__[color] - player.gems.__dict__[color])
+        for color in player.gems.__dict__.keys()
+    )
+    assert required_gold <= player.gems.gold, \
+        f"Not enough gems. Tried to pay {card.cost}, but player has gems: {player.gems}, generation: {player.generation}."
+    reduced_cost = Gems(
+        **{
+            color: min(reduced_cost.__dict__[color], player.gems.__dict__[color])
+            for color in player.gems.__dict__.keys()
+        }
+    )
+    reduced_cost.gold += required_gold
+    # pay for and receive card
+    player.gems -= reduced_cost
     player.generation += card.generation
     player.purchased_cards.append(card)
     player.points += card.points

@@ -39,3 +39,67 @@ def test_end_turn():
     assert game_state.gem_pool == Gems(1, 1, 0, 4, 4, 5)
     assert game_state.current_player_n == (0 if player_n == 1 else 1)
     game_state.check_consistency()
+
+
+def test_end_game():
+    # trigger last round
+    game_state = new_game(n_players=3)
+    first_player = game_state.players[game_state.current_player_n]
+    first_player.points = 15
+    game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
+    assert game_state.current_player_n == (game_state.first_player_n + 1) % 3
+    assert game_state.last_round
+    assert game_state.winners == []
+
+    # last round continues
+    game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
+    assert game_state.current_player_n == (game_state.first_player_n + 2) % 3
+    assert game_state.winners == []
+
+    # game ends after last round with first player as winner
+    game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
+    assert game_state.current_player_n == (game_state.first_player_n + 2) % 3
+    assert game_state.winners == [first_player]
+
+    # further continuation does nothing
+    game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
+    assert game_state.current_player_n == (game_state.first_player_n + 2) % 3
+    assert game_state.winners == [first_player]
+
+
+def test_score_winner():
+    # normal winner
+    game_state = new_game(n_players=2)
+    first_player = game_state.players[game_state.current_player_n]
+    first_player.points = 15
+    game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
+    game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
+    assert game_state.winners == [first_player]
+
+    # tiebreaker winner
+    game_state = new_game(n_players=2)
+    first_player = game_state.players[game_state.current_player_n]
+    first_player.points = 15
+    first_player.purchased_cards = [
+        game_state.decks_by_level[0][0],
+        game_state.decks_by_level[0][1],
+    ]
+    game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
+    assert game_state.winners == []
+    second_player = game_state.players[(game_state.current_player_n) % 2]
+    second_player.points = 15
+    second_player.purchased_cards = [
+        game_state.decks_by_level[1][0],
+    ]
+    game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
+    assert game_state.winners == [second_player]
+
+    # tie
+    game_state = new_game(n_players=2)
+    first_player = game_state.players[game_state.current_player_n]
+    first_player.points = 15
+    game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
+    second_player = game_state.players[(game_state.current_player_n) % 2]
+    second_player.points = 15
+    game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
+    assert game_state.winners == [first_player, second_player]

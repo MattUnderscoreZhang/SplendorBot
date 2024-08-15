@@ -8,7 +8,7 @@ class Gems:
     green: int
     red: int
     black: int
-    yellow: int
+    gold: int
 
     def __add__(self, other: "Gems") -> "Gems":
         return Gems(
@@ -17,7 +17,7 @@ class Gems:
             self.green + other.green,
             self.red + other.red,
             self.black + other.black,
-            self.yellow + other.yellow,
+            self.gold + other.gold,
         )
 
     def __sub__(self, other: "Gems") -> "Gems":
@@ -27,25 +27,25 @@ class Gems:
             self.green - other.green,
             self.red - other.red,
             self.black - other.black,
-            self.yellow - other.yellow,
+            self.gold - other.gold,
         )
 
     def __ge__(self, other: "Gems") -> bool:
-        return all(self.__dict__[c] >= other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "yellow"])
+        return all(self.__dict__[c] >= other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "gold"])
 
     def __gt__(self, other: "Gems") -> bool:
         return (
             self >= other and
-            any(self.__dict__[c] > other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "yellow"])
+            any(self.__dict__[c] > other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "gold"])
         )
 
     def __le__(self, other: "Gems") -> bool:
-        return all(self.__dict__[c] <= other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "yellow"])
+        return all(self.__dict__[c] <= other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "gold"])
 
     def __lt__(self, other: "Gems") -> bool:
         return (
             self <= other and
-            any(self.__dict__[c] < other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "yellow"])
+            any(self.__dict__[c] < other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "gold"])
         )
 
     def __len__(self) -> int:
@@ -95,7 +95,7 @@ class GameState:
     current_player_n: int
     round: int
     last_round: bool
-    winner: Player | None
+    winners: list[Player]
 
     def check_consistency(self) -> None:
         # total number of gems

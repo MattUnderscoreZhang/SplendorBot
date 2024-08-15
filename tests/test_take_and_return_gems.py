@@ -9,7 +9,7 @@ def test_bad_takes():
     # negative gems
     with raises(Exception):
         take_gems(game_state, player_n=0, gems=Gems(-1, 0, 0, 0, 0, 0))
-    # colored + yellow
+    # colored + gold
     with raises(Exception):
         take_gems(game_state, player_n=0, gems=Gems(1, 1, 0, 0, 0, 1))
     # too many colors
@@ -29,7 +29,7 @@ def test_not_enough_gems_to_return():
         return_gems(game_state, player_n=0, gems=Gems(1, 1, 1, 1, 1, 0))
 
 
-def test_take_yellow_gem():
+def test_take_gold():
     game_state = new_game(n_players=2)
     game_state = take_gems(game_state, player_n=0, gems=Gems(0, 0, 0, 0, 0, 1))
     assert game_state.players[0].gems == Gems(0, 0, 0, 0, 0, 1)
