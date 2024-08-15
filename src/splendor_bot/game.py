@@ -54,28 +54,62 @@ def move_to_next_player(game_state: GameState) -> GameState:
     return game_state
 
 
-# TODO: return gems
+def return_gems(game_state: GameState, player_n: int, gems: Gems) -> GameState:
+    game_state = deepcopy(game_state)
+    player = game_state.players[player_n]
+    assert gems <= player.gems, \
+        f"Not enough gems. Tried to return {gems}, but player has {player.gems}."
+    player.gems -= gems
+    game_state.gem_pool += gems
+    return game_state
 
 
 # TODO: win nobles
 
 
 # TODO: end turn (return gems, win nobles, move to next player)
+# def end_turn(game_state: GameState) -> GameState:
+    # game_state = deepcopy(game_state)
+    # current_player = game_state.players[game_state.current_player_n]
 
 
-# TODO: take gems
-"""
-def take_gems(self, gems: Gems) -> None:
-    assert len(gems) <= 3, "Can only take up to 3 gems."
-    assert gems <= self.gem_pool, "Not enough gems in the pool."
-    assert sum(gems[i] > self.players[self.current_player_n].gems[i] for i in range(6)) <= 1, "Can only take 2 gems of the same color."
-    # take the gems
-    self.gem_pool -= gems
-    self.players[self.current_player_n].gems += gems
-"""
+def take_gems(game_state: GameState, player_n: int, gems: Gems) -> GameState:
+    game_state = deepcopy(game_state)
+    # validate that gems are takable
+    assert gems > Gems(0, 0, 0, 0, 0, 0), "Must take at least one gem."
+    assert gems <= game_state.gem_pool, f"Not enough gems. Tried to take {gems}, but gem pool is {game_state.gem_pool}."
+    # can only take one yellow by itself (when reserving a card)
+    if gems.yellow != 0:
+        assert gems == Gems(0, 0, 0, 0, 0, 1), f"Can only take one yellow by itself. Tried to take {gems}."
+    # rules for normal gem taking
+    else:
+        # counting non-yellow colors
+        n_colors_in_pool = sum([val > 0 and key != "yellow" for key, val in game_state.gem_pool.__dict__.items()])
+        taking_n_colors = sum(val > 0 and key != "yellow" for key, val in gems.__dict__.items())
+        # if taking one color
+        if taking_n_colors == 1:
+            gem_color = [key for key, val in gems.__dict__.items() if val > 0][0]
+            # (disputed rule) can take just 1 gem if there's less than 4 of that color
+            if len(gems) == 1:
+                assert n_colors_in_pool == 1 and game_state.gem_pool.__dict__[gem_color] < 4, \
+                    f"Invalid selection. Tried to take {gems}, when gem pool is {game_state.gem_pool}."
+            # can only take 2 gems of a color if there are 4 or more of that color
+            else:
+                assert len(gems) == 2, f"Can only take 2 gems of one color. Tried to take {gems}."
+                assert game_state.gem_pool.__dict__[gem_color] >= 4, \
+                    f"Invalid selection. Tried to take {gems} from {game_state.gem_pool}."
+        # if taking different colors
+        else:
+            # (disputed rule) can take less than 3 gems if there aren't at least 3 colors
+            assert len(gems) == taking_n_colors == min(n_colors_in_pool, 3), \
+                f"Must take (up to) 3 gems of different colors. Tried to take {gems}."
+    # take gems
+    game_state.players[player_n].gems += gems
+    game_state.gem_pool -= gems
+    return game_state
 
 
-# TODO: reserve card (reserve card, deal card, take gold)
+# TODO: reserve card (reserve card, deal card, take yellow)
 
 
-# TODO: purchase card (purchase card (increase generation), deal card, return gems)
+# TODO: purchase card (purchase card (return gems, increase generation, get points), deal card)

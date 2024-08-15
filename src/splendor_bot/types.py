@@ -30,8 +30,23 @@ class Gems:
             self.yellow - other.yellow,
         )
 
+    def __ge__(self, other: "Gems") -> bool:
+        return all(self.__dict__[c] >= other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "yellow"])
+
+    def __gt__(self, other: "Gems") -> bool:
+        return (
+            self >= other and
+            any(self.__dict__[c] > other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "yellow"])
+        )
+
     def __le__(self, other: "Gems") -> bool:
         return all(self.__dict__[c] <= other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "yellow"])
+
+    def __lt__(self, other: "Gems") -> bool:
+        return (
+            self <= other and
+            any(self.__dict__[c] < other.__dict__[c] for c in ["white", "blue", "green", "red", "black", "yellow"])
+        )
 
     def __len__(self) -> int:
         return sum(self.__dict__.values())
