@@ -5,7 +5,7 @@ from splendor_bot.game import (
     take_gems, 
     purchase_card, 
     purchase_card_from_board, 
-    reserve_card, 
+    reserve_card_from_board, 
     purchase_reserved_card,
 )
 from splendor_bot.types import Card, Gems
@@ -81,7 +81,7 @@ def test_purchase_card_from_board():
 
 def test_purchase_reserved_card():
     game_state = new_game(n_players=2)
-    game_state = reserve_card(game_state, player_n=0, level=1, card_n=0)
+    game_state = reserve_card_from_board(game_state, player_n=0, level=1, card_n=0)
     # invalid card
     with raises(Exception):
         purchase_reserved_card(game_state, player_n=0, card_n=1)
