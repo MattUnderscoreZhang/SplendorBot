@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/htmx.org@2.0.1"></script>
+        <script src="https://unpkg.com/htmx-ext-sse@2.2.1/sse.js"></script>
+        <script src="https://unpkg.com/htmx-ext-ws@2.0.0/ws.js"></script>
+    </head>
+    <body class="h-full | bg-gray-200 | flex justify-center items-center">
+        <div id="card" class="
+            w-32 h-48 p-4
+            bg-gray-400 rounded-md shadow-2xl
+            flex flex-col justify-center items-center gap-1
+            text-white text-center
+        ">
+            <div id="card_gems_and_generation" class="w-full | flex justify-between align-center">
+                <div class="text-2xl font-bold ml-2">
+                    {{ card.points }}
+                </div>
+                <!--each card should only generate one color-->
+                <div class="
+                    w-8 h-8
+                    rounded-full
+                    {{ 
+                        'bg-white' if card.generation.white > 0 else
+                        'bg-blue-500' if card.generation.blue > 0 else
+                        'bg-green-500' if card.generation.green > 0 else
+                        'bg-red-500' if card.generation.red > 0 else
+                        'bg-black' if card.generation.black > 0 else
+                        ''
+                    }}
+                ">
+                </div>
+            </div>
+            <div id="card_divider" class="
+                h-1 w-full my-4
+                bg-gray-300
+            "></div>
+            <div id="card_cost_row_1" class="flex justify-center gap-1">
+                <div class="w-8 h-8 pt-1 | bg-white rounded-full text-black">
+                    {{ card.cost.white or "-" }}
+                </div>
+                <div class="w-8 h-8 pt-1 | bg-blue-500 rounded-full">
+                    {{ card.cost.blue or "-" }}
+                </div>
+            </div>
+            <div id="card_cost_row_2" class="flex justify-center gap-1">
+                    <div class="w-8 h-8 pt-1 | bg-green-500 rounded-full">
+                        {{ card.cost.green or "-" }}
+                    </div>
+                    <div class="w-8 h-8 pt-1 | bg-red-500 rounded-full">
+                        {{ card.cost.red or "-" }}
+                    </div>
+                    <div class="w-8 h-8 pt-1 | bg-black rounded-full">
+                        {{ card.cost.black or "-" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
