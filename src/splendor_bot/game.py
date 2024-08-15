@@ -152,7 +152,24 @@ def purchase_card_from_board(game_state: GameState, player_n: int, level: int, c
     return game_state
 
 
-# TODO: reserve card (reserve card, deal card, take yellow)
+def reserve_card(game_state: GameState, player_n: int, level: int, card_n: int) -> GameState:
+    game_state = deepcopy(game_state)
+    assert 1 <= level <= 3, f"Invalid level {level}."
+    assert 0 <= card_n < len(game_state.revealed_cards_by_level[level-1]), f"Invalid card number {card_n}."
+    assert len(game_state.players[player_n].reserved_cards) < 3, "Can't reserve more than 3 cards."
+    card = game_state.revealed_cards_by_level[level-1].pop(card_n)
+    game_state.players[player_n].reserved_cards.append(card)
+    game_state = deal_card(game_state, level)
+    # if there's no yellow gems left, don't do anything
+    if game_state.gem_pool.yellow > 0:
+        game_state = take_gems(game_state, player_n, Gems(0, 0, 0, 0, 0, 1))
+    return game_state
 
 
-# TODO: purchase reserved card (remove card, pay for card)
+def purchase_reserved_card(game_state: GameState, player_n: int, card_n: int) -> GameState:
+    game_state = deepcopy(game_state)
+    player = game_state.players[player_n]
+    assert 0 <= card_n < len(player.reserved_cards), f"Invalid card number {card_n}."
+    card = player.reserved_cards.pop(card_n)
+    game_state = purchase_card(game_state, player_n, card)
+    return game_state

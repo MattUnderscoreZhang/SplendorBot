@@ -1,6 +1,13 @@
 from pytest import raises
 
-from splendor_bot.game import new_game, take_gems, purchase_card, purchase_card_from_board
+from splendor_bot.game import (
+    new_game, 
+    take_gems, 
+    purchase_card, 
+    purchase_card_from_board, 
+    reserve_card, 
+    purchase_reserved_card,
+)
 from splendor_bot.types import Card, Gems
 
 
@@ -66,6 +73,23 @@ def test_purchase_card_from_board():
     game_state.players[0].gems = Gems(4, 4, 4, 4, 4, 0)
     card = game_state.revealed_cards_by_level[0][0]
     game_state = purchase_card_from_board(game_state, player_n=0, level=1, card_n=0)
+    assert len(game_state.players[0].purchased_cards) == 1
+    assert game_state.players[0].points == card.points
+    assert game_state.players[0].gems == Gems(4, 4, 4, 4, 4, 0) - card.cost
+    assert game_state.players[0].generation == card.generation
+
+
+def test_purchase_reserved_card():
+    game_state = new_game(n_players=2)
+    game_state = reserve_card(game_state, player_n=0, level=1, card_n=0)
+    # invalid card
+    with raises(Exception):
+        purchase_reserved_card(game_state, player_n=0, card_n=1)
+
+    game_state.players[0].gems = Gems(4, 4, 4, 4, 4, 0)
+    card = game_state.players[0].reserved_cards[0]
+    game_state = purchase_reserved_card(game_state, player_n=0, card_n=0)
+    assert len(game_state.players[0].reserved_cards) == 0
     assert len(game_state.players[0].purchased_cards) == 1
     assert game_state.players[0].points == card.points
     assert game_state.players[0].gems == Gems(4, 4, 4, 4, 4, 0) - card.cost
