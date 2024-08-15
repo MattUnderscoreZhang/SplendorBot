@@ -95,6 +95,7 @@ class GameState:
     current_player_n: int
     round: int
     last_round: bool
+    winner: Player | None
 
     def check_consistency(self) -> None:
         # total number of gems

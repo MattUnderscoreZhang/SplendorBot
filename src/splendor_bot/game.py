@@ -2,7 +2,7 @@ from copy import deepcopy
 import random
 
 from splendor_bot.base_deck import decks_by_level, nobles
-from splendor_bot.types import Gems, GameState, Player
+from splendor_bot.types import Gems, GameState, Player, Card
 
 
 def new_game(n_players: int) -> GameState:
@@ -36,11 +36,13 @@ def new_game(n_players: int) -> GameState:
         current_player_n=first_player_n,
         round=1,
         last_round=False,
+        winner=None,
     )
 
 
 def deal_card(game_state: GameState, level: int) -> GameState:
     game_state = deepcopy(game_state)
+    # TODO: take no action if deck is empty
     card = game_state.decks_by_level[level-1].pop()
     game_state.revealed_cards_by_level[level-1].append(card)
     return game_state
@@ -84,6 +86,9 @@ def end_turn(game_state: GameState, gems_to_return: Gems) -> GameState:
     else:
         assert len(gems_to_return) == 0, "Unnecessary gem return."
     game_state = win_nobles(game_state, game_state.current_player_n)
+    # TODO: check last round
+    # TODO: check end game
+    # TODO: if game over, score winner, else move to next player
     game_state = move_to_next_player(game_state)
     return game_state
 
@@ -124,7 +129,30 @@ def take_gems(game_state: GameState, player_n: int, gems: Gems) -> GameState:
     return game_state
 
 
+def purchase_card(game_state: GameState, player_n: int, card: Card) -> GameState:
+    game_state = deepcopy(game_state)
+    player = game_state.players[player_n]
+    # TODO: allow use of yellow gems
+    assert card.cost <= player.gems, \
+        f"Not enough gems. Tried to pay {card.cost}, but player has {player.gems}."
+    player.gems -= card.cost
+    player.generation += card.generation
+    player.purchased_cards.append(card)
+    player.points += card.points
+    return game_state
+
+
+def purchase_card_from_board(game_state: GameState, player_n: int, level: int, card_n: int) -> GameState:
+    game_state = deepcopy(game_state)
+    assert 1 <= level <= 3, f"Invalid level {level}."
+    assert 0 <= card_n < len(game_state.revealed_cards_by_level[level-1]), f"Invalid card number {card_n}."
+    card = game_state.revealed_cards_by_level[level-1].pop(card_n)
+    game_state = purchase_card(game_state, player_n, card)
+    game_state = deal_card(game_state, level)
+    return game_state
+
+
 # TODO: reserve card (reserve card, deal card, take yellow)
 
 
-# TODO: purchase card (purchase card (return gems, increase generation, get points), deal card)
+# TODO: purchase reserved card (remove card, pay for card)
