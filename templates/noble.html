@@ -1,47 +1,33 @@
-<html>
-    <head>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://unpkg.com/htmx.org@2.0.1"></script>
-        <script src="https://unpkg.com/htmx-ext-sse@2.2.1/sse.js"></script>
-        <script src="https://unpkg.com/htmx-ext-ws@2.0.0/ws.js"></script>
-    </head>
-    <body class="h-full | bg-gray-200 | flex justify-center items-center">
-        <div id="noble_card" class="
-            w-32 h-48 p-4
-            bg-gray-400 rounded-md shadow-2xl
-            flex flex-col justify-center items-center gap-1
-            text-white text-center
-        ">
-            <div id="noble_card_crown" class="w-full">
-                {% include "icons/crown.svg" %}
-            </div>
-            <div id="card_divider" class="
-                h-1 w-full my-2
-                bg-gray-300
-            "></div>
-            <div id="card_cost_row_1" class="flex justify-center gap-1">
-                <div class="w-8 h-8 pt-1 | bg-white rounded-full text-black">
-                    {{ noble.requirements.white or "-" }}
-                </div>
-                <div class="w-8 h-8 pt-1 | bg-blue-500 rounded-full">
-                    {{ noble.requirements.blue or "-" }}
-                </div>
-            </div>
-            <div id="noble.requirements_row_2" class="flex justify-center gap-1">
-                    <div class="w-8 h-8 pt-1 | bg-green-500 rounded-full">
-                        {{ noble.requirements.green or "-" }}
-                    </div>
-                    <div class="w-8 h-8 pt-1 | bg-red-500 rounded-full">
-                        {{ noble.requirements.red or "-" }}
-                    </div>
-                    <div class="w-8 h-8 pt-1 | bg-black rounded-full">
-                        {{ noble.requirements.black or "-" }}
-                    </div>
-                </div>
-            </div>
+<div id="noble_card" class="
+    w-32 h-48 p-4
+    bg-gray-400 rounded-md shadow-2xl
+    flex flex-col justify-center items-center gap-1
+    text-white text-center
+">
+    <div id="noble_card_crown" class="w-full">
+        {% include "icons/crown.svg" %}
+    </div>
+    <div id="card_divider" class="
+        h-1 w-full my-2
+        bg-gray-300
+    "></div>
+    <div id="card_cost_row_1" class="flex justify-center gap-1">
+        <div class="w-8 h-8 pt-1 | bg-white rounded-full text-black">
+            {{ noble.requirements.white or "-" }}
         </div>
-        <br>
-    </body>
-    <!--Make sure to credit on page if using this image:-->
-    <!--<a href="https://www.freepik.com/free-vector/crowns-monoline-doodle-style_198566506.htm#query=crown%20svg&position=33&from_view=keyword&track=ais_hybrid&uuid=879285c5-b05b-457e-89d6-074f8c0e759a">Crown image by juicy_fish</a> on Freepik-->
-</html>
+        <div class="w-8 h-8 pt-1 | bg-blue-500 rounded-full">
+            {{ noble.requirements.blue or "-" }}
+        </div>
+    </div>
+    <div id="noble.requirements_row_2" class="flex justify-center gap-1">
+        <div class="w-8 h-8 pt-1 | bg-green-500 rounded-full">
+            {{ noble.requirements.green or "-" }}
+        </div>
+        <div class="w-8 h-8 pt-1 | bg-red-500 rounded-full">
+            {{ noble.requirements.red or "-" }}
+        </div>
+        <div class="w-8 h-8 pt-1 | bg-black rounded-full">
+            {{ noble.requirements.black or "-" }}
+        </div>
+    </div>
+</div>
