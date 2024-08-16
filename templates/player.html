@@ -1,0 +1,102 @@
+{% extends "game.template.html" %}
+
+{% block content %}
+<div id="player" class="
+    w-96 h-48 p-4
+    bg-gray-400 rounded-md shadow-2xl
+    flex justify-center items-center
+">
+    <div id="player_indicators" class="h-full pt-2 | flex flex-col">
+        {% if is_first_player %}
+            <div class="w-8 h-8 mb-6 | bg-white rounded-full | flex justify-center items-center">
+                1️⃣
+            </div>
+        {% endif %}
+        {% if is_current_player %}
+            <div class="w-8 h-8 mb-6 | {{
+                'bg-red-500' if is_last_round else 'bg-white'
+            }} rounded-full | flex justify-center items-center">
+                ⏳
+            </div>
+        {% endif %}
+        {% if is_winner %}
+            <div class="w-8 h-8 | bg-white rounded-full | flex justify-center items-center">
+                🏆
+            </div>
+        {% endif %}
+    </div>
+    <div id="player_divider_1" class="
+        h-full w-1 mx-4
+        bg-gray-300
+    "></div>
+    <div id="player_info" class="flex flex-col gap-2">
+        <div id="player_name" class="p-1 px-2 | bg-white rounded-md">
+            {{ player.name }}
+        </div>
+        <div id="player_points" class="{{ 'text-red-500' if player.points >= 15 }}">
+            ⭐ {{ player.points }}
+        </div>
+        <div id="player_gems" class="
+            flex flex-col justify-center items-center gap-1
+            text-white text-center
+        ">
+            {% for colors in [['white', 'blue', 'green'], ['red', 'black', 'gold']] %}
+                <div class="flex gap-1">
+                {% for key in colors %}
+                    <div class="
+                        w-16 h-8 p-1
+                        {{
+                            'bg-white' if key == 'white' else
+                            'bg-blue-500' if key == 'blue' else
+                            'bg-green-500' if key == 'green' else
+                            'bg-red-500' if key == 'red' else
+                            'bg-black' if key == 'black' else
+                            'bg-yellow-500'
+                        }}
+                        flex justify-between
+                        {{
+                            'text-black' if key in ['white', 'gold']
+                        }}
+                    ">
+                        <div class="w-8 | bg-gray-200 | text-black">
+                            {{ player.generation.__dict__[key] }}
+                        </div>
+                        <div class="w-6">
+                            {{ player.gems.__dict__[key] }}
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="player_divider_2" class="
+        h-full w-1 mx-4
+        bg-gray-300
+    "></div>
+    <div id="player_reserved_cards" class="flex flex-col gap-1">
+        {% for i in range(3) %}
+            {% if i < player.reserved_cards|length %}
+                <div class="w-8 h-12
+                    {{
+                        'bg-blue-600' if player.reserved_cards[i].level == 1 else
+                        'bg-yellow-600' if player.reserved_cards[i].level == 2 else
+                        'bg-green-600' if player.reserved_cards[i].level == 3 else
+                        'bg-black'
+                    }}
+                    rounded">
+                    <div id="card_back_text" class="
+                        h-full w-full
+                        flex justify-center items-center
+                        text-xs text-white
+                    ">
+                        USC
+                    </div>
+                </div>
+            {% else %}
+                <div class="w-8 h-12 | border-dashed border-2 border-white rounded"></div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -68,6 +68,7 @@ class Noble:
 
 @dataclass
 class Player:
+    name: str
     gems: Gems = field(default_factory=lambda: Gems(0, 0, 0, 0, 0, 0))
     generation: Gems = field(default_factory=lambda: Gems(0, 0, 0, 0, 0, 0))
     hand: list[Card] = field(default_factory=list)

@@ -1,0 +1,23 @@
+{% extends "game.template.html" %}
+
+{% block content %}
+<div id="card_back" class="
+    w-32 h-48 p-4
+    rounded-md shadow-2xl
+    {{
+        'bg-blue-600' if level == 1 else
+        'bg-yellow-600' if level == 2 else
+        'bg-green-600' if level == 3 else
+        'bg-black'
+    }}
+    flex flex-col justify-center items-center gap-1
+    text-white text-center
+">
+    <div id="card_back_text" class="
+        w-full
+        drop-shadow-[0_0px_40px_rgba(250,255,179,1)]
+    ">
+        Unlicensed Splendor Clone
+    </div>
+</div>
+{% endblock %}

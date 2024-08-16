@@ -102,4 +102,6 @@ def test_score_winner():
     second_player = game_state.players[(game_state.current_player_n) % 2]
     second_player.points = 15
     game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
-    assert game_state.winners == [first_player, second_player]
+    assert len(game_state.winners) == 2
+    assert first_player in game_state.winners
+    assert second_player in game_state.winners

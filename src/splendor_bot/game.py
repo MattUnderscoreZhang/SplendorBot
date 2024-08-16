@@ -27,7 +27,7 @@ def new_game(n_players: int) -> GameState:
     ]
     # set up game
     return GameState(
-        players=[Player() for _ in range(n_players)],
+        players=[Player(f"Player {i}") for i in range(n_players)],
         decks_by_level=decks_by_level_after_deal,
         revealed_cards_by_level=revealed_cards_by_level,
         nobles=revealed_nobles,

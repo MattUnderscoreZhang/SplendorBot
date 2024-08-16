@@ -1,3 +1,6 @@
+{% extends "game.template.html" %}
+
+{% block content %}
 <div id="noble_card" class="
     w-32 h-48 p-4
     bg-gray-400 rounded-md shadow-2xl
@@ -7,11 +10,11 @@
     <div id="noble_card_crown" class="w-full">
         {% include "icons/crown.svg" %}
     </div>
-    <div id="card_divider" class="
+    <div id="noble_card_divider" class="
         h-1 w-full my-2
         bg-gray-300
     "></div>
-    <div id="card_cost_row_1" class="flex justify-center gap-1">
+    <div id="noble_card_requirements_row_1" class="flex justify-center gap-1">
         <div class="w-8 h-8 pt-1 | bg-white rounded-full text-black">
             {{ noble.requirements.white or "-" }}
         </div>
@@ -19,7 +22,7 @@
             {{ noble.requirements.blue or "-" }}
         </div>
     </div>
-    <div id="noble.requirements_row_2" class="flex justify-center gap-1">
+    <div id="noble_card_requirements_row_2" class="flex justify-center gap-1">
         <div class="w-8 h-8 pt-1 | bg-green-500 rounded-full">
             {{ noble.requirements.green or "-" }}
         </div>
@@ -31,3 +34,4 @@
         </div>
     </div>
 </div>
+{% endblock %}

@@ -5,8 +5,6 @@ module.exports = {
         "src/splendor_bot/*.py",
         "server/*.py",
     ],
-    theme: {
-        extend: {},
-    },
+    theme: {},
     plugins: [],
 }
