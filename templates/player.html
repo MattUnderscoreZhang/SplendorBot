@@ -1,12 +1,9 @@
-{% extends "game.template.html" %}
-
-{% block content %}
 <div id="player" class="
-    w-96 h-48 p-4
+    w-96 h-48 py-4
     bg-gray-400 rounded-md shadow-2xl
     flex justify-center items-center
 ">
-    <div id="player_indicators" class="h-full pt-2 | flex flex-col">
+    <div id="player_indicators" class="w-8 h-full pt-2 | flex flex-col">
         {% if is_first_player %}
             <div class="w-8 h-8 mb-6 | bg-white rounded-full | flex justify-center items-center">
                 1️⃣
@@ -30,7 +27,7 @@
         bg-gray-300
     "></div>
     <div id="player_info" class="flex flex-col gap-2">
-        <div id="player_name" class="p-1 px-2 | bg-white rounded-md">
+        <div id="player_name" class="p-1 px-2 | bg-white rounded-md | text-black">
             {{ player.name }}
         </div>
         <div id="player_points" class="{{ 'text-red-500' if player.points >= 15 }}">
@@ -74,7 +71,7 @@
         h-full w-1 mx-4
         bg-gray-300
     "></div>
-    <div id="player_reserved_cards" class="flex flex-col gap-1">
+    <div id="player_reserved_cards" class="w-8 | flex flex-col gap-1">
         {% for i in range(3) %}
             {% if i < player.reserved_cards|length %}
                 <div class="w-8 h-12
@@ -99,4 +96,3 @@
         {% endfor %}
     </div>
 </div>
-{% endblock %}

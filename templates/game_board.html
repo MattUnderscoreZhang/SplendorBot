@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Unlicensed Splendor Bot</title>
+
+        <!--tailwind-->
+        <!--<script src="https://cdn.tailwindcss.com"></script>-->
+        <link href="css/tailwind.css" rel="stylesheet">
+
+        <!--htmx-->
+        <script src="https://unpkg.com/htmx.org@2.0.1"></script>
+        <script src="https://unpkg.com/htmx-ext-sse@2.2.1/sse.js"></script>
+        <script src="https://unpkg.com/htmx-ext-ws@2.0.0/ws.js"></script>
+    </head>
+    <body class="h-screen | bg-gray-200 | flex justify-center items-center">
+        <div id="game_board" class="
+            w-full h-full
+            flex justify-center items-center gap-1
+            text-white text-center
+        ">
+            {% autoescape false %}
+                <div class="flex flex-col gap-1">
+                    <div id="nobles" class="flex justify-end gap-1">
+                        {% for noble_html in nobles_html %}
+                            {{ noble_html }}
+                        {% endfor %}
+                    </div>
+                    <div class="flex gap-1">
+                        <div id="decks" class="flex flex-col gap-1">
+                            {% for i in range(3)|reverse %}
+                                {{ decks_html[i] }}
+                            {% endfor %}
+                        </div>
+                        <div id="gem_cards" class="flex flex-col gap-1">
+                            {% for i in range(3)|reverse %}
+                                <div class="flex gap-1">
+                                    {% for j in range(gem_cards_html[i]|length) %}
+                                        {{ gem_cards_html[i][j] }}
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div id="gem_pool">
+                    {{ gem_pool_html }}
+                </div>
+                <div id="players" class="flex flex-col justify-end gap-1">
+                    {% for i in range(4) %}
+                        {{ players_html[i] }}
+                    {% endfor %}
+                </div>
+            {% endautoescape %}
+        </div>
+    </body>
+</html>
