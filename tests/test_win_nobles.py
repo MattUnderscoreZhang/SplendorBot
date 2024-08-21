@@ -1,11 +1,11 @@
 from splendor_bot.base_deck import nobles
-from splendor_bot.game import new_game, win_nobles
+from splendor_bot.game import new_test_game, win_nobles
 from splendor_bot.types import Gems
 
 
 def test_win_nobles():
     # alter game state to have all nobles and give player lots of gem generation
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     game_state.nobles = nobles
     game_state.players[0].generation = Gems(0, 0, 4, 4, 4, 0)
 

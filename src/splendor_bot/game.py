@@ -5,8 +5,15 @@ from splendor_bot.base_deck import decks_by_level, nobles
 from splendor_bot.types import Gems, GameState, Player, Card
 
 
-def new_game(n_players: int) -> GameState:
+def new_test_game(n_players: int) -> GameState:
+    # start a new game with a number of dummy players
+    players = [Player(f"Player {i}") for i in range(n_players)]
+    return new_game(players)
+
+
+def new_game(players: list[Player]) -> GameState:
     # changes for number of players
+    n_players = len(players)
     assert 2 <= n_players <= 4, "Only 2-4 players are supported."
     n_gems = (
         4 if n_players == 2 else
@@ -27,7 +34,7 @@ def new_game(n_players: int) -> GameState:
     ]
     # set up game
     return GameState(
-        players=[Player(f"Player {i}") for i in range(n_players)],
+        players=players,
         decks_by_level=decks_by_level_after_deal,
         revealed_cards_by_level=revealed_cards_by_level,
         nobles=revealed_nobles,

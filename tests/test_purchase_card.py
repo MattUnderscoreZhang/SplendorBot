@@ -1,7 +1,7 @@
 from pytest import raises
 
 from splendor_bot.game import (
-    new_game,
+    new_test_game,
     take_gems,
     purchase_card,
     purchase_card_from_board,
@@ -12,7 +12,7 @@ from splendor_bot.types import Card, Gems
 
 
 def test_purchase_card():
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     # not enough gems
     with raises(Exception):
         purchase_card(
@@ -80,7 +80,7 @@ def test_purchase_card():
 
 
 def test_purchase_card_from_board():
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     # not enough gems
     with raises(Exception):
         purchase_card_from_board(game_state, player_n=0, level=0, card_n=0)
@@ -101,7 +101,7 @@ def test_purchase_card_from_board():
 
 
 def test_purchase_reserved_card():
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     game_state = reserve_card_from_board(game_state, player_n=0, level=0, card_n=0)
     # invalid card
     with raises(Exception):

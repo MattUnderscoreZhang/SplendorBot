@@ -1,11 +1,11 @@
 from pytest import raises
 
-from splendor_bot.game import new_game, reserve_card_from_board, reserve_card_from_deck
+from splendor_bot.game import new_test_game, reserve_card_from_board, reserve_card_from_deck
 from splendor_bot.types import Gems
 
 
 def test_reserve_card_from_board():
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     # invalid card
     with raises(Exception):
         reserve_card_from_board(game_state, player_n=0, level=3, card_n=0)
@@ -29,7 +29,7 @@ def test_reserve_card_from_board():
 
 
 def test_reserve_card_from_deck():
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     # invalid card
     with raises(Exception):
         reserve_card_from_deck(game_state, player_n=0, level=3)

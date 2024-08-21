@@ -1,11 +1,11 @@
 from pytest import raises
 
-from splendor_bot.game import new_game, take_gems, move_to_next_player, end_turn
+from splendor_bot.game import new_test_game, take_gems, move_to_next_player, end_turn
 from splendor_bot.types import Gems
 
 
 def test_move_to_next_player():
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     first_player = game_state.first_player_n
     assert game_state.current_player_n == first_player
     assert game_state.round == 1
@@ -20,7 +20,7 @@ def test_move_to_next_player():
 
 
 def test_end_turn():
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     player_n = game_state.current_player_n
     for _ in range(3):
         game_state = take_gems(game_state, player_n, Gems(1, 1, 1, 0, 0, 0))
@@ -43,7 +43,7 @@ def test_end_turn():
 
 def test_end_game():
     # trigger last round
-    game_state = new_game(n_players=3)
+    game_state = new_test_game(n_players=3)
     first_player = game_state.players[game_state.current_player_n]
     first_player.points = 15
     game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
@@ -69,7 +69,7 @@ def test_end_game():
 
 def test_score_winner():
     # normal winner
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     first_player = game_state.players[game_state.current_player_n]
     first_player.points = 15
     game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))
@@ -77,7 +77,7 @@ def test_score_winner():
     assert game_state.winners == [first_player]
 
     # tiebreaker winner
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     first_player = game_state.players[game_state.current_player_n]
     first_player.points = 15
     first_player.purchased_cards = [
@@ -95,7 +95,7 @@ def test_score_winner():
     assert game_state.winners == [second_player]
 
     # tie
-    game_state = new_game(n_players=2)
+    game_state = new_test_game(n_players=2)
     first_player = game_state.players[game_state.current_player_n]
     first_player.points = 15
     game_state = end_turn(game_state, Gems(0, 0, 0, 0, 0, 0))

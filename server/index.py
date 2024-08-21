@@ -117,5 +117,8 @@ def game_board(request: Request, game_state: GameState) -> HTMLResponse:
 
 @app.get("/", response_class=HTMLResponse)
 def game(request: Request):
-    game_state = new_game(n_players=4)
+    n_players = 4
+    game_state = new_game(
+        players=[Player(f"Player {i}") for i in range(n_players)],
+    )
     return game_board(request, game_state)
