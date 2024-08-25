@@ -1,10 +1,12 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import json
 from pathlib import Path
 
 from splendor_bot.game import new_game
+from splendor_bot.pubsub import PubSub
 from splendor_bot.types import Card, Noble, Gems, Player, GameState
 
 
@@ -122,3 +124,42 @@ def game(request: Request):
         players=[Player(f"Player {i}") for i in range(n_players)],
     )
     return game_board(request, game_state)
+
+
+pubsub = PubSub()
+connections: dict[str, WebSocket] = {}
+
+
+@app.get("/ws_test/{connection_id}", response_class=HTMLResponse)
+def websocket_test(request: Request, connection_id: str):
+    return templates.TemplateResponse(
+        request=request,
+        name="ws_test.html",
+        context={
+            "connection_id": connection_id,
+        },
+    )
+
+
+@app.websocket("/ws_test_connection/{connection_id}")
+async def websocket_test_connection(websocket: WebSocket, connection_id: str):
+    await websocket.accept()
+    connections[connection_id] = websocket
+    print("New connection", connection_id)
+    print(connections)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            json_data = json.loads(data)
+            message = json_data["message"]
+            if message.isnumeric():
+                message = int(message)
+                print("Received number", message)
+                await websocket.send_text(f'<div id="id_number">{message}</div>')
+            else:
+                print("Received string", message)
+                await websocket.send_text(f'<div id="id_text">{message}</div>')
+    except WebSocketDisconnect:
+        connections.pop(connection_id)
+        print("Connection closed", connection_id)
+        print(connections)

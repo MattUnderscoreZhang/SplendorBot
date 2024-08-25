@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Websocket Test</title>
+
+        <!--tailwind-->
+        <!--<script src="https://cdn.tailwindcss.com"></script>-->
+        <link href="css/tailwind.css" rel="stylesheet">
+
+        <!--htmx-->
+        <script src="https://unpkg.com/htmx.org@2.0.1"></script>
+        <script src="https://unpkg.com/htmx-ext-ws@2.0.0/ws.js"></script>
+    </head>
+    <body class="h-screen | bg-gray-200 | flex flex-col justify-center items-center">
+        <div hx-ext="ws" ws-connect="/ws_test_connection/{{ connection_id }}">
+            <form ws-send class="flex gap-2">
+                <input
+                    id="input"
+                    name="message"
+                    placeholder="message"
+                    class="border p-2 bg-gray-900 text-white"
+                    autofocus
+                />
+                <button type="submit" class="border p-2">Submit</button>
+            </form>
+            <div id="id_text">text</div>
+            <div id="id_number">number</div>
+        </div>
+    </body>
+</html>
