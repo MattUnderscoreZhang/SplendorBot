@@ -5,16 +5,16 @@ from fastapi.templating import Jinja2Templates
 import json
 from uuid import uuid4, UUID
 
-from splendor_bot.game import new_game, Player
-from splendor_bot.types import GameState
+from splendor_bot.game_logic.game import new_game, Player
+from splendor_bot.game_logic.types import GameState
 
-from server.routers.diagnose import print_diagnose
-from server.routers.splendor.game_html import game_board_html
-from server.routers.splendor.pubsub import PubSub
+from splendor_bot.server.diagnose import print_diagnose
+from splendor_bot.server.game_html import game_board_html
+from splendor_bot.server.pubsub import PubSub
 
 
 router = APIRouter(prefix="/splendor")
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="assets/templates")
 pubsub = PubSub()
 
 
@@ -47,7 +47,7 @@ async def create_new_waiting_room(request: Request):
 
 
 @router.websocket("/waiting-room/{game_uuid}")
-async def create_new_player_and_join_waiting_room(websocket: WebSocket, game_uuid: str):
+async def create_new_player_and_join_waiting_room(websocket: WebSocket, game_uuid: UUID):
     await websocket.accept()
     connection = Connection(websocket=websocket, in_waiting_room=True, game_uuid=game_uuid)
     connection_uuid = uuid4()

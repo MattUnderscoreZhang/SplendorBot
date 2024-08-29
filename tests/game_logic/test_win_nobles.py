@@ -1,6 +1,6 @@
-from splendor_bot.base_deck import nobles
-from splendor_bot.game import new_test_game, win_nobles
-from splendor_bot.types import Gems
+from splendor_bot.game_logic.base_deck import nobles
+from splendor_bot.game_logic.game import new_test_game, win_nobles
+from splendor_bot.game_logic.types import Gems
 
 
 def test_win_nobles():

@@ -1,8 +1,8 @@
 from copy import deepcopy
 import random
 
-from splendor_bot.base_deck import decks_by_level, nobles
-from splendor_bot.types import Gems, GameState, Player, Card
+from splendor_bot.game_logic.base_deck import decks_by_level, nobles
+from splendor_bot.game_logic.types import Gems, GameState, Player, Card
 
 
 def new_test_game(n_players: int) -> GameState:

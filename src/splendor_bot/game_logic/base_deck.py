@@ -1,4 +1,4 @@
-from splendor_bot.types import Gems, Card, Noble
+from splendor_bot.game_logic.types import Gems, Card, Noble
 
 
 deck_level_1 = [

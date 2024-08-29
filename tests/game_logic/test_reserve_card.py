@@ -1,7 +1,11 @@
 from pytest import raises
 
-from splendor_bot.game import new_test_game, reserve_card_from_board, reserve_card_from_deck
-from splendor_bot.types import Gems
+from splendor_bot.game_logic.game import (
+    new_test_game,
+    reserve_card_from_board,
+    reserve_card_from_deck,
+)
+from splendor_bot.game_logic.types import Gems
 
 
 def test_reserve_card_from_board():

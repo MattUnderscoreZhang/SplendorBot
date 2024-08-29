@@ -3,14 +3,15 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
-from routers.splendor.router import router as splendor_router
+import splendor_bot
+from splendor_bot.server.router import router as splendor_router
 
 
 app = FastAPI()
 # https://stackoverflow.com/questions/73917396/why-doesnt-uvicorn-pick-up-changes-to-css-files
 app.mount(
     "/css",
-    StaticFiles(directory=Path(__file__).parent.parent.absolute() / "css"),
+    StaticFiles(directory=Path(splendor_bot.__file__).parent.absolute() / "assets/css"),
     name="css",
 )
 

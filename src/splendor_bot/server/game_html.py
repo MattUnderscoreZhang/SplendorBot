@@ -2,10 +2,10 @@ from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from splendor_bot.types import Card, Noble, Gems, Player, GameState
+from splendor_bot.game_logic.types import Card, Noble, Gems, Player, GameState
 
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="assets/templates")
 
 
 def gem_card_html(request: Request, card: Card) -> str:

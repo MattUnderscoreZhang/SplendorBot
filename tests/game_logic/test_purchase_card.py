@@ -1,6 +1,6 @@
 from pytest import raises
 
-from splendor_bot.game import (
+from splendor_bot.game_logic.game import (
     new_test_game,
     take_gems,
     purchase_card,
@@ -8,7 +8,7 @@ from splendor_bot.game import (
     reserve_card_from_board,
     purchase_reserved_card,
 )
-from splendor_bot.types import Card, Gems
+from splendor_bot.game_logic.types import Card, Gems
 
 
 def test_purchase_card():

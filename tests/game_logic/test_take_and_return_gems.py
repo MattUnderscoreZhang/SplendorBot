@@ -1,7 +1,7 @@
 from pytest import raises
 
-from splendor_bot.game import new_test_game, take_gems, return_gems
-from splendor_bot.types import Gems
+from splendor_bot.game_logic.game import new_test_game, take_gems, return_gems
+from splendor_bot.game_logic.types import Gems
 
 
 def test_bad_takes():

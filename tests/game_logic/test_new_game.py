@@ -1,6 +1,6 @@
 from pytest import raises
 
-from splendor_bot.game import new_test_game
+from splendor_bot.game_logic.game import new_test_game
 
 
 def test_n_players():

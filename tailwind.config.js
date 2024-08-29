@@ -1,9 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
-        "templates/*.html",
-        "src/splendor_bot/*.py",
-        "server/*.py",
+        "assets/templates/*.html",
+        "src/splendor_bot/**/*.py",
     ],
     theme: {},
     plugins: [],

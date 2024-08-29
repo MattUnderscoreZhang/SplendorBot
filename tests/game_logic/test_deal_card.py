@@ -1,4 +1,4 @@
-from splendor_bot.game import new_test_game, deal_card
+from splendor_bot.game_logic.game import new_test_game, deal_card
 
 
 def test_deal_card():
