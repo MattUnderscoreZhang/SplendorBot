@@ -1,42 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Unlicensed Splendor Bot</title>
-
-        <!--tailwind-->
-        <link href="/css/tailwind.css" rel="stylesheet">
-
-        <!--htmx-->
-        <script src="https://unpkg.com/htmx.org@2.0.1"></script>
-        <script src="https://unpkg.com/htmx-ext-ws@2.0.0/ws.js"></script>
-    </head>
-    <body class="h-screen | bg-gray-200 | flex flex-col justify-center items-center">
-        <div id="game_uuid" class="hidden">{{ game_uuid }}</div>
-        <div id="temp_waiting_room">
-            You are in a waiting room for game:
-            <br>
-            {{ game_uuid }}
-        </div>
+<div id="game">
+    <div>
+        You are in a waiting room for game:
+        <br>
+        {{ game_id }}
+    </div>
+    <div>
+        <input type="hidden" name="game_id" value={{ game_id }} />
         <input
-            hx-ext="ws"
-            ws-connect="{{ splendor_prefix }}/game/{{ game_uuid }}"
             ws-send
             type="text"
             id="input"
-            name="player_name"
+            name="update_player_name"
             placeholder="Player Name"
             class="border p-2 bg-gray-900 text-white"
             autofocus
         />
-        <div id="players_in_waiting_room">Waiting for players</div>
+        {% if player_names|length > 0 %}
+            <div id="players_in_waiting_room">
+                Players in waiting room:
+                <ul>
+                    {% for player_name in player_names %}
+                        <li>{{ player_name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div id="players_in_waiting_room">Waiting for players</div>
+        {% endif %}
         <button
             ws-send
-            hx-get="{{ splendor_prefix }}/game/{{ game_uuid }}/start"
+            name="start_game"
             class="border p-2 bg-gray-900 text-white"
         >
             Start Game
         </button>
-    </body>
-</html>
+    </div>
+</div>

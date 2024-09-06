@@ -1,8 +1,11 @@
-from dataclasses import dataclass
-from fastapi import APIRouter, Request, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
+from dataclasses import dataclass, field
+from fastapi import APIRouter, Request, WebSocket
+from fastapi.responses import HTMLResponse
+from jinja2 import Environment, FileSystemLoader
 import json
+import random
+from starlette.websockets import WebSocketDisconnect
+import string
 from uuid import uuid4, UUID
 
 from splendor_bot.game_logic.game import new_game, Player
@@ -14,96 +17,160 @@ from splendor_bot.server.pubsub import PubSub
 
 splendor_prefix = "/splendor"
 router = APIRouter(prefix=splendor_prefix)
-templates = Jinja2Templates(directory="assets/templates")
-pubsub = PubSub()
+env = Environment(loader=FileSystemLoader("assets/templates"))
+
+
+################################
+# ACTIVE GAMES AND CONNECTIONS #
+################################
 
 
 @dataclass
 class PlayerConnection:
     websocket: WebSocket
-    game_uuid: UUID
-    name: str
+    player_name: str
+    connection_uuid: UUID
+    disconnected: bool = False
 
 
 @dataclass
 class ActiveGame:
-    game_state: GameState | None
-    player_connections: list[PlayerConnection]
+    game_state: GameState | None = field(default=None)
+    player_connections: list[PlayerConnection] = field(default_factory=list)
+    pubsub: PubSub = field(default_factory=PubSub)
 
 
-active_games: dict[UUID, ActiveGame] = {}
+active_games: dict[str, ActiveGame] = {}
 
 
-@router.get("/new-game", response_class=RedirectResponse)
-async def create_new_game(request: Request):
-    game_uuid = uuid4()
-    return RedirectResponse(f"{splendor_prefix}/game/{game_uuid}")
-
-
-@router.get("/game/{game_uuid}", response_class=HTMLResponse)
-async def display_game_or_waiting_room(request: Request, game_uuid: UUID):
-    if game_uuid not in active_games:
-        game = ActiveGame(game_state=None, player_connections=[])
-        active_games[game_uuid] = game
-        # TODO: give alert that game did not exist on redirect
-        return RedirectResponse(f"{splendor_prefix}/new-game")
-    if active_games[game_uuid].game_state is None:
-        return templates.TemplateResponse(
-            request=request,
-            name="waiting_room.html",
-            context={
-                "splendor_prefix": splendor_prefix,
-                "game_uuid": game_uuid,
-                "player_names": [player_connection.name for player_connection in active_games[game_uuid].player_connections],
-            },
-        )
-    else:
-        return game_board_html(request, game_state=active_games[game_uuid].game_state)  # type: ignore
-
-
-@router.websocket("/game/{game_uuid}")
-async def game_websocket(websocket: WebSocket, game_uuid: UUID):
-    await websocket.accept()
-    # create new player connection
-    player_connection = PlayerConnection(websocket=websocket, game_uuid=game_uuid, name="Player Name")
-    game_player_connections = active_games[game_uuid].player_connections
-    game_player_connections.append(player_connection)
-    # subscribe to player list updates
-    callback_uuid = pubsub.subscribe(
-        f"update_players_list_{game_uuid}",
-        lambda game_player_connections: player_connection.websocket.send_text(
-            f'''<div id="players_in_waiting_room">{{{{ {
-                [player_connection.name for player_connection in game_player_connections]
-            } }}}}</div>'''
+async def _add_player_to_game(game_id: str, player_connection: PlayerConnection):
+    game = active_games[game_id]
+    game.player_connections.append(player_connection)
+    # subscribe to game updates
+    game.pubsub.subscribe(
+        "update_game",
+        lambda: player_connection.websocket.send_text(
+            env.get_template("waiting_room.html").render(
+                {
+                    "game_id": game_id,
+                    "player_names": [
+                        player_connection.player_name
+                        for player_connection
+                        in game.player_connections
+                    ],
+                },
+            )
+            if game.game_state is None
+            else game_board_html(game.game_state)
         ),
+        player_connection.connection_uuid,
     )
-    # publish new player
-    await pubsub.publish(f"update_players_list_{game_uuid}", game_player_connections)
-    # handle websocket messages
+    # push game update
+    await game.pubsub.publish("update_game")
+
+
+async def _remove_player_from_game(game_id: str, player_connection: PlayerConnection):
+    if game_id not in active_games:
+        return
+    game = active_games[game_id]
+    game.player_connections.remove(player_connection)
+    game.pubsub.unsubscribe("update_game", player_connection.connection_uuid)
+    await game.pubsub.publish("update_game")
+    if len(game.player_connections) == 0:
+        del active_games[game_id]
+
+
+###################################
+# ROUTER ENDPOINTS AND WEBSOCKETS #
+###################################
+
+
+@router.get("/", response_class=HTMLResponse)
+async def create_new_game(request: Request):
+    return env.get_template("new_game.html").render(
+        {"splendor_prefix": splendor_prefix}
+    )
+
+
+@router.websocket("/")
+async def waiting_room_websocket(websocket: WebSocket):
+    await websocket.accept()
+    player_connection = PlayerConnection(
+        websocket=websocket,
+        player_name="Player",
+        connection_uuid = uuid4(),
+    )
+    game_id = ""
     try:
         while True:
             data = await websocket.receive_text()
             json_data = json.loads(data)
-            # in waiting room
-            if active_games[game_uuid].game_state is None:
-                # update player name
-                if "player_name" in json_data:
-                    player_connection.name = json_data["player_name"]
-                    print(player_connection.name)
-                    await pubsub.publish(f"update_players_list_{game_uuid}", game_player_connections)
-                # start game
-                if "start_game" in json_data:
-                    """
-                    TODO
-                    """
-                    n_players = len(game_player_connections)
-                    active_games[game_uuid].game_state = new_game(
-                        players=[Player(f"Player {i}") for i in range(n_players)],
-                    )
-            # in game
+            if game_id == "":
+                game_id = await _join_game_and_get_id(game_id, player_connection, json_data)
             else:
-                ...
+                game = active_games[game_id]
+                if game.game_state is None:
+                    await _update_waiting_room(game, player_connection, json_data)
+                else:
+                    await _update_game(game, player_connection, json_data)
     except WebSocketDisconnect:
-        game_player_connections.remove(player_connection)
-        pubsub.unsubscribe(f"update_players_list_{game_uuid}", callback_uuid)
-        await pubsub.publish(f"update_players_list_{game_uuid}", game_player_connections)
+        await _remove_player_from_game(game_id, player_connection)
+
+
+async def _join_game_and_get_id(
+    game_id: str,
+    player_connection: PlayerConnection,
+    json_data: dict,
+) -> str:
+    if "join_waiting_room" not in json_data.keys():
+        return ""
+    # create new game
+    if json_data["join_waiting_room"] == "new_game":
+        game_id = "".join(random.choices(string.ascii_uppercase + string.digits, k=4))
+        active_games[game_id] = ActiveGame()
+    # check what game to join, and give warning if game does not exist
+    elif json_data["join_waiting_room"] == "existing_game":
+        game_id = json_data["game_id"].upper()
+        if game_id == "":
+            return ""
+        elif game_id not in active_games:
+            await player_connection.websocket.send_text(f'<div id="warning">Game with ID {game_id} does not exist</div>')
+            return ""
+    # add player to game
+    await _add_player_to_game(game_id, player_connection)
+    return game_id
+
+
+async def _update_waiting_room(
+    game: ActiveGame,
+    player_connection: PlayerConnection,
+    json_data: dict,
+) -> None:
+    # update player name
+    if "update_player_name" in json_data.keys():
+        player_connection.player_name = json_data["update_player_name"]
+        await game.pubsub.publish("update_game")
+    # start game
+    if "start_game" in json_data.keys():
+        game.game_state = new_game(
+            [
+                Player(
+                    name=player_connection.player_name,
+                )
+                for player_connection
+                in game.player_connections
+            ]
+        )
+        await game.pubsub.publish("update_game")
+
+
+async def _update_game(
+    game: ActiveGame,
+    player_connection: PlayerConnection,
+    json_data: dict,
+) -> None:
+    game_state = game.game_state
+    websocket.send_text(
+        game_board_html(game_state)  # type: ignore
+    )
+    await game.pubsub.publish("update_game")

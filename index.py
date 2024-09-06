@@ -20,7 +20,7 @@ app.include_router(splendor_router)
 
 @app.get("/", response_class=RedirectResponse)
 def redirect_splendor(request: Request):
-    return RedirectResponse("/splendor/new-game")
+    return RedirectResponse("/splendor")
 
 
 # TODO:
