@@ -217,3 +217,26 @@ async def _update_game(
     json_data: dict,
 ) -> None:
     await game.pubsub.publish("update_game")
+
+
+############################
+# REACTIVE COMPONENT TESTS #
+############################
+
+
+from splendor_bot.server import game_html
+
+
+@router.get("/reactive_tests", response_class=HTMLResponse)
+async def reactive_tests(request: Request):
+    players = [
+        Player(
+            name=f"Bot {i}",
+            is_bot=True,
+        )
+        for i in range(4)
+    ]
+    game_state = new_game(players)
+    return env.get_template("reactive_test_template.html").render(
+        content=game_html.gem_card_html(game_state.decks_by_level[0][0])
+    )
