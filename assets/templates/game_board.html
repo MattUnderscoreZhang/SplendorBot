@@ -4,27 +4,21 @@
         text-white text-center
     ">
         {% autoescape false %}
-            <div class="flex flex-col gap-1">
-                <div id="nobles" class="flex justify-end gap-1">
+            <div class="w-[24rem] | flex flex-col gap-1">
+                <div id="nobles" class="flex-1 | flex justify-end gap-1">
                     {% for noble_html in nobles_html %}
                         {{ noble_html }}
                     {% endfor %}
                 </div>
-                <div class="flex gap-1">
-                    <div id="decks" class="flex flex-col gap-1">
-                        {% for i in range(3)|reverse %}
+                <div id="gem_cards" class="flex-[3_3_0%] | flex flex-col gap-1">
+                    {% for i in range(3)|reverse %}
+                        <div class="flex gap-1">
                             {{ decks_html[i] }}
-                        {% endfor %}
-                    </div>
-                    <div id="gem_cards" class="flex flex-col gap-1">
-                        {% for i in range(3)|reverse %}
-                            <div class="flex gap-1">
-                                {% for j in range(gem_cards_html[i]|length) %}
-                                    {{ gem_cards_html[i][j] }}
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                    </div>
+                            {% for j in range(gem_cards_html[i]|length) %}
+                                {{ gem_cards_html[i][j] }}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
             <div id="gem_pool">

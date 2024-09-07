@@ -1,5 +1,5 @@
 <div id="card_back" class="
-    w-32 h-48 p-4
+    flex-1 aspect-[2/3]
     rounded-md shadow-2xl
     {{
         'bg-blue-600' if level == 1 else
@@ -7,12 +7,12 @@
         'bg-green-600' if level == 3 else
         'bg-gray-200'
     }}
-    flex flex-col justify-center items-center gap-1
-    text-white text-center
+    flex justify-center items-center
 ">
     <div id="card_back_text" class="
         w-full
         drop-shadow-[0_0px_40px_rgba(250,255,179,1)]
+        text-white text-center text-[10px] md:text-[12px] lg:text-[14px]
     ">
         {{ "Unlicensed Splendor Clone" if level > 0 }}
     </div>

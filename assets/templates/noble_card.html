@@ -1,33 +1,38 @@
 <div id="noble_card" class="
-    w-32 h-48 p-4
+    flex-1 aspect-[2/3]
     bg-gray-400 rounded-md shadow-2xl
-    flex flex-col justify-center items-center gap-1
-    text-white text-center
+    flex justify-center items-center
+    text-white text-center text-[10px] md:text-[12px] lg:text-[14px]
 ">
-    <div id="noble_card_crown" class="w-full">
-        {% include "icons/crown.svg" %}
+    <div id="card_left_spacer" class="flex-[.1_.1_0%]"></div>
+    <div id="card_content" class="w-full h-full flex-1 | flex flex-col">
+        <div id="card_top_spacer" class="flex-[.5_.5_0%]"></div>
+        <div id="noble_card_crown" class="flex-1 w-full">
+            {% include "icons/crown.svg" %}
+        </div>
+        <div id="noble_card_divider" class="w-full flex-1 | flex items-center">
+            <div class="h-1 w-full bg-gray-300"></div>
+        </div>
+        <div id="noble_card_requirements_row_1" class="flex-1 flex justify-center gap-1">
+            <div class="h-full aspect-square | bg-white rounded-full text-black">
+                {{ noble.requirements.white or "-" }}
+            </div>
+            <div class="h-full aspect-square | bg-blue-500 rounded-full">
+                {{ noble.requirements.blue or "-" }}
+            </div>
+        </div>
+        <div id="noble_card_requirements_row_2" class="flex-1 flex justify-center gap-1">
+            <div class="h-full aspect-square | bg-green-500 rounded-full">
+                {{ noble.requirements.green or "-" }}
+            </div>
+            <div class="h-full aspect-square | bg-red-500 rounded-full">
+                {{ noble.requirements.red or "-" }}
+            </div>
+            <div class="h-full aspect-square | bg-black rounded-full">
+                {{ noble.requirements.black or "-" }}
+            </div>
+        </div>
+        <div id="card_bottom_spacer" class="flex-[.5_.5_0%]"></div>
     </div>
-    <div id="noble_card_divider" class="
-        h-1 w-full my-2
-        bg-gray-300
-    "></div>
-    <div id="noble_card_requirements_row_1" class="flex justify-center gap-1">
-        <div class="w-8 h-8 pt-1 | bg-white rounded-full text-black">
-            {{ noble.requirements.white or "-" }}
-        </div>
-        <div class="w-8 h-8 pt-1 | bg-blue-500 rounded-full">
-            {{ noble.requirements.blue or "-" }}
-        </div>
-    </div>
-    <div id="noble_card_requirements_row_2" class="flex justify-center gap-1">
-        <div class="w-8 h-8 pt-1 | bg-green-500 rounded-full">
-            {{ noble.requirements.green or "-" }}
-        </div>
-        <div class="w-8 h-8 pt-1 | bg-red-500 rounded-full">
-            {{ noble.requirements.red or "-" }}
-        </div>
-        <div class="w-8 h-8 pt-1 | bg-black rounded-full">
-            {{ noble.requirements.black or "-" }}
-        </div>
-    </div>
+    <div id="card_right_spacer" class="flex-[.1_.1_0%]"></div>
 </div>

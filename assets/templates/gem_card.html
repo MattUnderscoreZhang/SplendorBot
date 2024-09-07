@@ -1,15 +1,15 @@
 <!--the card aspect ratio will break if the parent is much wider than it is tall-->
 <div id="card" class="
-    w-full aspect-[2/3]
+    flex-1 aspect-[2/3]
     bg-gray-400 rounded-md shadow-2xl
     flex justify-center items-center
-    text-white text-center
+    text-white text-center text-[10px] md:text-[12px] lg:text-[14px]
 ">
     <div id="card_left_spacer" class="flex-[.1_.1_0%]"></div>
     <div id="card_content" class="w-full h-full flex-1 | flex flex-col">
         <div id="card_top_spacer" class="flex-[.5_.5_0%]"></div>
         <div id="card_gems_and_generation" class="w-full flex-1 | flex justify-around">
-            <div class="md:text-2xl font-bold my-auto">
+            <div class="text-[16px] md:text-[18px] lg:text-[20px] font-bold my-auto">
                 {{ card.points }}
             </div>
             <!--each card should only generate one color-->
@@ -29,7 +29,7 @@
         <div id="card_divider" class="w-full flex-[2_2_0%] | flex items-center">
             <div class="h-1 w-full bg-gray-300"></div>
         </div>
-        <div id="card_cost" class="w-full flex-[2_2_0%] | flex flex-col | text-xs md:text-sm">
+        <div id="card_cost" class="w-full flex-[2_2_0%] | flex flex-col">
             <div id="card_cost_row_1" class="flex-1 | flex justify-center gap-1">
                 <div class="h-full aspect-square | bg-white rounded-full | text-black flex justify-center items-center">
                     {{ card.cost.white or "-" }}
