@@ -1,38 +1,61 @@
-<div id="game">
+<div id="game" class="flex flex-col justify-center items-center gap-8">
     <div>
-        You are in a waiting room for game:
-        <br>
-        {{ game_id }}
+        You are in a waiting room for game ID:
+        <span class="text-red-500 font-bold">{{ game_id }}</span>
     </div>
-    <div>
-        <input type="hidden" name="game_id" value={{ game_id }} />
-        <input
-            ws-send
-            type="text"
-            id="input"
-            name="update_player_name"
-            placeholder="Player Name"
-            class="border p-2 bg-gray-900 text-white"
-            autofocus
-        />
-        {% if player_names|length > 0 %}
-            <div id="players_in_waiting_room">
-                Players in waiting room:
-                <ul>
-                    {% for player_name in player_names %}
-                        <li>{{ player_name }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% else %}
-            <div id="players_in_waiting_room">Waiting for players</div>
-        {% endif %}
-        <button
-            ws-send
-            name="start_game"
-            class="border p-2 bg-gray-900 text-white"
+    <div id="players">
+        <div id="players">
+            <ul class="flex flex-col items-center gap-2">
+                {% for i in range(n_players) %}
+                    <li class="w-full rounded border border-gray-500 {{
+                        'p-2 bg-gray-100' if i != player_n
+                    }}">
+                        {% if i == player_n %}
+                            <input
+                                ws-send
+                                type="text"
+                                id="input"
+                                name="update_player_name"
+                                placeholder="{{ player_names[i] }}"
+                                class="border p-2 bg-gray-900 text-white"
+                                autofocus
+                            >
+                        {% elif i < player_names|length %}
+                            {{ player_names[i] }}
+                        {% else %}
+                            Bot Player 🤖
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% if player_n == 0 %}
+        <div
+            id="host_controls"
+            class="border-2 border-blue-800 p-2 rounded | flex flex-col items-center gap-4"
         >
-            Start Game
-        </button>
-    </div>
+            <div class="text-blue-800 font-bold">Host controls</div>
+            <div class="flex items-center gap-1">
+                Number of players:
+                {% for i in range(2, 5) %}
+                    <button
+                        ws-send
+                        name="n_players"
+                        value={{ i }}
+                        class="rounded px-3 {{ 'bg-blue-800' if n_players == i else 'bg-blue-300' }} text-white"
+                    >
+                        {{ i }}
+                    </button>
+                {% endfor %}
+            </div>
+            <button
+                ws-send
+                name="start_game"
+                class="border p-2 bg-gray-900 text-white"
+            >
+                Start Game
+            </button>
+        </div>
+    {% endif %}
 </div>
