@@ -1,19 +1,38 @@
-<div id="card_back" class="
-    flex-1 aspect-[2/3]
-    rounded-md shadow-2xl
-    {{
-        'bg-blue-600' if level == 1 else
-        'bg-yellow-600' if level == 2 else
-        'bg-green-600' if level == 3 else
-        'bg-gray-200'
-    }}
-    flex justify-center items-center
-">
-    <div id="card_back_text" class="
-        w-full
-        drop-shadow-[0_0px_40px_rgba(250,255,179,1)]
-        text-white text-center text-[10px] md:text-[12px] lg:text-[14px]
+<div class="@container flex-1 aspect-[2/3]">
+    <div id="card_back" class="
+        w-full h-full
+        rounded-md shadow-2xl
+        {{
+            'bg-blue-600' if level == 1 else
+            'bg-yellow-600' if level == 2 else
+            'bg-green-600' if level == 3 else
+            'bg-gray-200'
+        }}
+        flex justify-center items-center
     ">
-        {{ "Unlicensed Splendor Clone" if level > 0 }}
+        <div id="card_back_text_abbreviated" class="
+            w-full
+            drop-shadow-[0_0px_40px_rgba(250,255,179,1)]
+            text-white text-center
+                text-[0px]
+                @[2rem]:text-[16px]
+                @[3rem]:text-[19px]
+            @[4rem]:hidden
+        ">
+            {{ "UFC" if level > 0 }}
+        </div>
+        <div id="card_back_text" class="
+            w-full
+            drop-shadow-[0_0px_40px_rgba(250,255,179,1)]
+            text-white text-center
+                @[4rem]:text-[10px]
+                @[6rem]:text-[13px]
+                @[8rem]:text-[18px]
+                @[10rem]:text-[26px]
+                @[12rem]:text-[29px]
+            hidden @[4rem]:block
+        ">
+            {{ "Unlicensed<br>Splendor<br>Clone" if level > 0 }}
+        </div>
     </div>
 </div>

@@ -239,5 +239,6 @@ async def reactive_tests(request: Request):
     game_state = new_game(players)
     return env.get_template("reactive_test_template.html").render(
         # content=game_html.gem_card_html(game_state.decks_by_level[0][0])
+        # content=game_html.noble_card_html(game_state.nobles[0])
         content=game_html.game_board_html(game_state)
     )

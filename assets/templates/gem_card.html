@@ -1,56 +1,79 @@
-<!--the card aspect ratio will break if the parent is much wider than it is tall-->
-<div id="card" class="
-    flex-1 aspect-[2/3]
-    bg-gray-400 rounded-md shadow-2xl
-    flex justify-center items-center
-    text-white text-center text-[10px] md:text-[12px] lg:text-[14px]
-">
-    <div id="card_left_spacer" class="flex-[.1_.1_0%]"></div>
-    <div id="card_content" class="w-full h-full flex-1 | flex flex-col">
-        <div id="card_top_spacer" class="flex-[.5_.5_0%]"></div>
-        <div id="card_gems_and_generation" class="w-full flex-1 | flex justify-around">
-            <div class="text-[16px] md:text-[18px] lg:text-[20px] font-bold my-auto">
-                {{ card.points }}
+<div class="@container flex-1 aspect-[2/3]">
+    <div id="card" class="
+        w-full h-full
+        bg-gray-400 rounded-md shadow-2xl
+        flex justify-center items-center
+    ">
+        <div id="card_left_spacer" class="flex-[.1_.1_0%]"></div>
+        <div id="card_content" class="w-full h-full flex-1 | flex flex-col">
+            <div id="card_top_spacer" class="flex-[.5_.5_0%]"></div>
+            <div id="card_gems_and_generation" class="w-full flex-1 | flex justify-around">
+                <div class="
+                    font-bold my-auto
+                        text-[6px]
+                        @[2rem]:text-[8px]
+                        @[2rem]:text-[10px]
+                        @[3rem]:text-[13px]
+                        @[4rem]:text-[18px]
+                        @[6rem]:text-[26px]
+                        @[8rem]:text-[39px]
+                        @[10rem]:text-[60px]
+                        @[12rem]:text-[70px]
+                ">
+                    {{ card.points }}
+                </div>
+                <!--each card should only generate one color-->
+                <div class="
+                    h-full aspect-square
+                    rounded-full
+                    {{ 
+                        'bg-white' if card.generation.white > 0 else
+                        'bg-blue-500' if card.generation.blue > 0 else
+                        'bg-green-500' if card.generation.green > 0 else
+                        'bg-red-500' if card.generation.red > 0 else
+                        'bg-black' if card.generation.black > 0 else
+                        ''
+                    }}
+                "></div>
             </div>
-            <!--each card should only generate one color-->
-            <div class="
-                h-full aspect-square
-                rounded-full
-                {{ 
-                    'bg-white' if card.generation.white > 0 else
-                    'bg-blue-500' if card.generation.blue > 0 else
-                    'bg-green-500' if card.generation.green > 0 else
-                    'bg-red-500' if card.generation.red > 0 else
-                    'bg-black' if card.generation.black > 0 else
-                    ''
-                }}
-            "></div>
-        </div>
-        <div id="card_divider" class="w-full flex-[2_2_0%] | flex items-center">
-            <div class="h-1 w-full bg-gray-300"></div>
-        </div>
-        <div id="card_cost" class="w-full flex-[2_2_0%] | flex flex-col">
-            <div id="card_cost_row_1" class="flex-1 | flex justify-center gap-1">
-                <div class="h-full aspect-square | bg-white rounded-full | text-black flex justify-center items-center">
-                    {{ card.cost.white or "-" }}
+            <div id="card_divider" class="w-full flex-[1.5_1.5_0%] flex items-center">
+                <div class="h-1 w-full bg-gray-300"></div>
+            </div>
+            <div id="card_cost" class="
+                w-full flex-[2_2_0%]
+                flex flex-col
+                text-white text-center
+                    text-[4px]
+                    @[2rem]:text-[6px]
+                    @[3rem]:text-[8px]
+                    @[4rem]:text-[10px]
+                    @[6rem]:text-[13px]
+                    @[8rem]:text-[18px]
+                    @[10rem]:text-[26px]
+                    @[12rem]:text-[39px]
+            ">
+                <div id="card_cost_row_1" class="flex-1 | flex justify-center @[3rem]:gap-1">
+                    <div class="h-full aspect-square | bg-white rounded-full | text-black flex justify-center items-center">
+                        {{ card.cost.white or "-" }}
+                    </div>
+                    <div class="h-full aspect-square | bg-blue-500 rounded-full | flex justify-center items-center">
+                        {{ card.cost.blue or "-" }}
+                    </div>
                 </div>
-                <div class="h-full aspect-square | bg-blue-500 rounded-full flex justify-center items-center">
-                    {{ card.cost.blue or "-" }}
+                <div id="card_cost_row_2" class="flex-1 | flex justify-center @[3rem]:gap-1">
+                    <div class="h-full aspect-square | bg-green-500 rounded-full | flex justify-center items-center">
+                        {{ card.cost.green or "-" }}
+                    </div>
+                    <div class="h-full aspect-square | bg-red-500 rounded-full | flex justify-center items-center">
+                        {{ card.cost.red or "-" }}
+                    </div>
+                    <div class="h-full aspect-square | bg-black rounded-full | flex justify-center items-center">
+                        {{ card.cost.black or "-" }}
+                    </div>
                 </div>
             </div>
-            <div id="card_cost_row_2" class="flex-1 | flex justify-center gap-1">
-                <div class="h-full aspect-square | bg-green-500 rounded-full flex justify-center items-center">
-                    {{ card.cost.green or "-" }}
-                </div>
-                <div class="h-full aspect-square | bg-red-500 rounded-full flex justify-center items-center">
-                    {{ card.cost.red or "-" }}
-                </div>
-                <div class="h-full aspect-square | bg-black rounded-full flex justify-center items-center">
-                    {{ card.cost.black or "-" }}
-                </div>
-            </div>
+            <div id="card_bottom_spacer" class="flex-[.5_.5_0%]"></div>
         </div>
-        <div id="card_bottom_spacer" class="flex-[.5_.5_0%]"></div>
+        <div id="card_right_spacer" class="flex-[.1_.1_0%]"></div>
     </div>
-    <div id="card_right_spacer" class="flex-[.1_.1_0%]"></div>
 </div>

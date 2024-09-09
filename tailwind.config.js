@@ -4,6 +4,8 @@ module.exports = {
         "assets/templates/*.html",
         "src/splendor_bot/**/*.py",
     ],
+    plugins: [
+        require('@tailwindcss/container-queries'),
+    ],
     theme: {},
-    plugins: [],
 }
