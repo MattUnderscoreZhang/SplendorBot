@@ -1,98 +1,131 @@
-<div id="player" class="
-    w-96 h-48 py-4
-    bg-gray-400 rounded-md shadow-2xl
-    flex justify-center items-center
-">
-    <div id="player_indicators" class="w-8 h-full pt-2 | flex flex-col">
-        {% if is_first_player %}
-            <div class="w-8 h-8 mb-6 | bg-white rounded-full | flex justify-center items-center">
-                1️⃣
-            </div>
-        {% endif %}
-        {% if is_current_player %}
-            <div class="w-8 h-8 mb-6 | {{
-                'bg-red-500' if is_last_round else 'bg-white'
-            }} rounded-full | flex justify-center items-center">
-                ⏳
-            </div>
-        {% endif %}
-        {% if is_winner %}
-            <div class="w-8 h-8 | bg-white rounded-full | flex justify-center items-center">
-                🏆
-            </div>
-        {% endif %}
-    </div>
-    <div id="player_divider_1" class="
-        h-full w-1 mx-4
-        bg-gray-300
-    "></div>
-    <div id="player_info" class="flex flex-col gap-2">
-        <div id="player_name" class="p-1 px-2 | bg-white rounded-md | text-black">
-            {{ player.name }}
-        </div>
-        <div id="player_points" class="{{ 'text-red-500' if player.points >= 15 }}">
-            ⭐ {{ player.points }}
-        </div>
-        <div id="player_gems" class="
-            flex flex-col justify-center items-center gap-1
-            text-white text-center
+<div class="@container h-full">
+    <div id="player" class="
+        h-full
+        @[6rem]:py-1
+        @[8rem]:py-2
+        bg-gray-400 rounded-md shadow-2xl
+        grid grid-cols-5
+    ">
+        <div id="player_indicators" class="
+            grid grid-rows-3 @[6rem]:gap-1
+            justify-center
+                text-[6px]
+                @[10rem]:text-[10px]
+                @[15rem]:text-[13px]
+                @[20rem]:text-[18px]
+                @[30rem]:text-[26px]
+                @[40rem]:text-[39px]
+                @[50rem]:text-[60px]
+                @[60rem]:text-[70px]
         ">
-            {% for colors in [['white', 'blue', 'green'], ['red', 'black', 'gold']] %}
-                <div class="flex gap-1">
-                {% for key in colors %}
+            {% if is_first_player %}
+                <div class="aspect-square | bg-white rounded-full | flex justify-center items-center">
+                    1️⃣
+                </div>
+            {% endif %}
+            {% if is_current_player %}
+                <div class="aspect-square | {{
+                    'bg-red-500' if is_last_round else 'bg-white'
+                }} rounded-full | flex justify-center items-center">
+                    ⏳
+                </div>
+            {% endif %}
+            {% if is_winner %}
+                <div class="aspect-square | bg-white rounded-full | flex justify-center items-center">
+                    🏆
+                </div>
+            {% endif %}
+        </div>
+        <div id="player_info" class="
+            col-span-3
+            flex flex-col
+                text-[6px]
+                @[10rem]:text-[10px]
+                @[15rem]:text-[13px]
+                @[20rem]:text-[18px]
+                @[30rem]:text-[26px]
+                @[40rem]:text-[39px]
+                @[50rem]:text-[60px]
+                @[60rem]:text-[70px]
+        ">
+            <div id="player_name" class="
+                flex-1 px-2
+                bg-white rounded-md
+                text-black text-nowrap font-bold flex justify-center items-center
+            ">
+                {{ player.name }}
+            </div>
+            <div id="player_points" class="
+                flex-1
+                {{ 'text-red-500' if player.points >= 15 }}
+                flex justify-center items-center
+            ">
+                ⭐ {{ player.points }}
+            </div>
+            <div id="player_gems" class="
+                flex-1
+                grid grid-cols-3 @[6rem]:gap-1
+                    text-[4px]
+                    @[10rem]:text-[6px]
+                    @[15rem]:text-[8px]
+                    @[20rem]:text-[10px]
+                    @[30rem]:text-[13px]
+                    @[40rem]:text-[18px]
+                    @[50rem]:text-[26px]
+                    @[60rem]:text-[39px]
+            ">
+                {% for color in ['white', 'blue', 'green', 'red', 'black', 'gold'] %}
                     <div class="
-                        w-16 h-8 p-1
                         {{
-                            'bg-white' if key == 'white' else
-                            'bg-blue-500' if key == 'blue' else
-                            'bg-green-500' if key == 'green' else
-                            'bg-red-500' if key == 'red' else
-                            'bg-black' if key == 'black' else
+                            'bg-white' if color == 'white' else
+                            'bg-blue-500' if color == 'blue' else
+                            'bg-green-500' if color == 'green' else
+                            'bg-red-500' if color == 'red' else
+                            'bg-black' if color == 'black' else
                             'bg-yellow-500'
                         }}
-                        flex justify-between
-                        {{
-                            'text-black' if key in ['white', 'gold']
-                        }}
+                        grid grid-cols-2
+                        text-center
                     ">
-                        <div class="w-8 | bg-gray-200 | text-black">
-                            {{ player.generation.__dict__[key] }}
+                        <div class="bg-gray-200 | text-black flex justify-center items-center">
+                            {{ player.generation.__dict__[color] }}
                         </div>
-                        <div class="w-6">
-                            {{ player.gems.__dict__[key] }}
+                        <div class="
+                            {{
+                                'text-black' if color in ['white', 'gold']
+                                else 'text-white'
+                            }}
+                            flex justify-center items-center
+                        ">
+                            {{ player.gems.__dict__[color] }}
                         </div>
                     </div>
                 {% endfor %}
-                </div>
+            </div>
+        </div>
+        <div id="player_reserved_cards" class="flex flex-col items-center @[6rem]:gap-1">
+            {% for i in range(3) %}
+                {% if i < player.reserved_cards|length %}
+                    <div class="flex-1 aspect-[2/3]
+                        {{
+                            'bg-blue-600' if player.reserved_cards[i].level == 1 else
+                            'bg-yellow-600' if player.reserved_cards[i].level == 2 else
+                            'bg-green-600' if player.reserved_cards[i].level == 3 else
+                            'bg-black'
+                        }}
+                        rounded">
+                        <div id="card_back_text" class="
+                            h-full w-full
+                            flex justify-center items-center
+                            text-xs text-white
+                        ">
+                            USC
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="flex-1 aspect-[2/3] | border-dashed border-2 border-white rounded"></div>
+                {% endif %}
             {% endfor %}
         </div>
-    </div>
-    <div id="player_divider_2" class="
-        h-full w-1 mx-4
-        bg-gray-300
-    "></div>
-    <div id="player_reserved_cards" class="w-8 | flex flex-col gap-1">
-        {% for i in range(3) %}
-            {% if i < player.reserved_cards|length %}
-                <div class="w-8 h-12
-                    {{
-                        'bg-blue-600' if player.reserved_cards[i].level == 1 else
-                        'bg-yellow-600' if player.reserved_cards[i].level == 2 else
-                        'bg-green-600' if player.reserved_cards[i].level == 3 else
-                        'bg-black'
-                    }}
-                    rounded">
-                    <div id="card_back_text" class="
-                        h-full w-full
-                        flex justify-center items-center
-                        text-xs text-white
-                    ">
-                        USC
-                    </div>
-                </div>
-            {% else %}
-                <div class="w-8 h-12 | border-dashed border-2 border-white rounded"></div>
-            {% endif %}
-        {% endfor %}
     </div>
 </div>

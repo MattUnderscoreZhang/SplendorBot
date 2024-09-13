@@ -234,11 +234,12 @@ async def reactive_tests(request: Request):
             name=f"Bot {i}",
             is_bot=True,
         )
-        for i in range(4)
+        for i in range(2)
     ]
     game_state = new_game(players)
     return env.get_template("reactive_test_template.html").render(
         # content=game_html.gem_card_html(game_state.decks_by_level[0][0])
         # content=game_html.noble_card_html(game_state.nobles[0])
+        # content=game_html.player_html(game_state.players[0], is_first_player=True, is_current_player=True, is_winner=True, is_last_round=True)
         content=game_html.game_board_html(game_state)
     )

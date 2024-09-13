@@ -1,29 +1,35 @@
-<div id="game" class="w-full">
-    <div id="game_board" class="flex justify-center items-center gap-1">
-        <div class="flex-[5_5_0%] | flex flex-col gap-1">
-            <div id="nobles" class="flex-1 | flex justify-end gap-1">
-                {% for noble_html in nobles_html %}
-                    {{ noble_html }}
-                {% endfor %}
-            </div>
-            <div id="gem_cards" class="flex-[3_3_0%] | flex flex-col gap-1">
-                {% for i in range(3)|reverse %}
-                    <div class="flex gap-1">
-                        {{ decks_html[i] }}
-                        {% for j in range(gem_cards_html[i]|length) %}
-                            {{ gem_cards_html[i][j] }}
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div id="players" class="flex-[2_2_0%] | flex flex-col gap-1">
-            {% for i in range(4) %}
-                {{ players_html[i] }}
+<div id="game" class="w-[80%] | grid grid-col-5 gap-1">
+    <div id="noble_cards" class="row-start-1 col-start-1 col-span-3">
+        <div class="p-2 | rounded bg-gray-200 grid grid-cols-5 gap-1">
+            {% for i in range(5-nobles_html|length) %}
+                <div></div>
+            {% endfor %}
+            {% for noble_html in nobles_html %}
+                {{ noble_html }}
             {% endfor %}
         </div>
-        <div id="gem_pool" class="flex-[.5_.5_0%]">
-            {{ gem_pool_html }}
+    </div>
+    <div id="players" class="row-start-1 row-span-2 col-start-4 col-span-2">
+        <div class="h-full p-2 | rounded bg-gray-200 | grid grid-rows-4 grid-cols-1 items-center gap-1">
+            {% for i in range(4-players_html|length) %}
+                <div></div>
+            {% endfor %}
+            {% for player_html in players_html %}
+                {{ player_html }}
+            {% endfor %}
+        </div>
+    </div>
+    <div id="gem_cards" class="row-start-2 col-start-1 col-span-3">
+        <div class="p-2 | rounded bg-gray-200 grid grid-cols-5 gap-1">
+            {% for i in range(3)|reverse %}
+                {{ decks_html[i] }}
+                {% for j in range(gem_cards_html[i]|length) %}
+                    {{ gem_cards_html[i][j] }}
+                {% endfor %}
+            {% endfor %}
         </div>
     </div>
 </div>
+<!--<div id="gem_pool" class="h-full">-->
+    <!--{{ gem_pool_html }}-->
+<!--</div>-->
